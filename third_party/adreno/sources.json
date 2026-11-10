@@ -23,5 +23,10 @@
     "file": "freedreno_copyright.xml",
     "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/freedreno_copyright.xml",
     "sha256": "16e6fda4963d01a6d2fa6c938a26082d6f0afd0988db7f953c9e4dea38739f2f"
+  },
+  {
+    "file": "freedreno_devices.py",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/common/freedreno_devices.py",
+    "sha256": "26960d9eef37eec697f378bb436f2ce068c38e5c28071bc0a68213a3d4cb53d1"
   }
 ]

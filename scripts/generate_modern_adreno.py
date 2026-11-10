@@ -6,6 +6,7 @@ Mesa's group order, register addresses, and slot counts are NOT KGSL group IDs.
 No product masks or formulas are inferred from event names.
 """
 import argparse
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -13,6 +14,38 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "third_party/adreno"
+
+
+def chip_ids():
+    # Parse data, never import/execute the upstream generator.
+    tree = ast.parse((SOURCE / "freedreno_devices.py").read_text(encoding="utf-8"))
+    result = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Name) or node.func.id != "add_gpus":
+            continue
+        if len(node.args) < 2 or not isinstance(node.args[0], ast.List) or not isinstance(node.args[1], ast.Call):
+            continue
+        info = node.args[1]
+        if not info.args or not isinstance(info.args[0], ast.Attribute):
+            continue
+        chip = info.args[0].attr
+        if chip not in ("A5XX", "A6XX", "A7XX", "A8XX"):
+            continue
+        for gpu in node.args[0].elts:
+            if not isinstance(gpu, ast.Call):
+                continue
+            ids = [kw.value.value for kw in gpu.keywords if kw.arg == "chip_id" and isinstance(kw.value, ast.Constant)]
+            if not ids and gpu.args and isinstance(gpu.args[0], ast.Constant) and isinstance(gpu.args[0].value, int):
+                n = gpu.args[0].value
+                ids = [(n // 100 << 24) | (n // 10 % 10 << 16) | (n % 10 << 8)]
+            for n in ids:
+                n &= 0xffffffff
+                generation = int(chip[1])
+                if n in result and result[n] != generation:
+                    raise ValueError("Conflicting Mesa device generations")
+                result[n] = generation
+    return "/* Generated from pinned Mesa freedreno_devices.py (MIT). */\n" + "".join(
+        f"  {{0x{chip:08x}u, {generation}}},\n" for chip, generation in sorted(result.items()))
 
 
 def events(family):
@@ -111,9 +144,7 @@ int {prefix}_create_context(uint32_t count,
   if (error) return error;
   hpc_gpu_adreno_kgsl_device_info_t info;
   hpc_gpu_adreno_raw_get_device_info(*out_context, &info);
-  uint32_t chip = info.chip_id & 0xffffff00u;
-  if ((info.chip_id >> 24) != {family[1]} ||
-      chip == 0x07000200u || chip == 0x07000400u) {{
+  if (hpc_gpu_adreno_kgsl_generation(info.chip_id) != {family[1]}) {{
     hpc_gpu_adreno_raw_destroy_context(*out_context);
     *out_context = NULL;
     return -HPC_GPU_ERROR_INCOMPATIBLE_DEVICE;
@@ -140,6 +171,13 @@ def main():
             else:
                 path.write_text(text, newline="\n")
         print(f"{family}: {len(events(family))} named KGSL candidates")
+    path = ROOT / "lib/gpu/adreno/chip_ids.inc"
+    text = chip_ids()
+    if args.check:
+        if path.read_text() != text:
+            raise SystemExit("Stale chip ID table")
+    else:
+        path.write_text(text, newline="\n")
 
 
 if __name__ == "__main__":

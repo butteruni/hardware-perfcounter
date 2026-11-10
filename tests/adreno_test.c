@@ -121,6 +121,10 @@ static void lifecycle_and_deltas(void) {
 }
 
 static void failures_and_families(void) {
+  assert(hpc_gpu_adreno_kgsl_generation(0x44050001) == 8);
+  assert(hpc_gpu_adreno_kgsl_generation(0x43050a01) == 7);
+  assert(hpc_gpu_adreno_kgsl_generation(0x43051401) == 7);
+  assert(hpc_gpu_adreno_kgsl_generation(0x44059999) == 0);
   hpc_gpu_adreno_kgsl_counter_t event = {0, 0, 0};
   hpc_gpu_adreno_raw_context_t *c;
   for (int i = 1; i <= 4; ++i) {
@@ -137,7 +141,7 @@ static void failures_and_families(void) {
   assert(!hpc_gpu_adreno_raw_start_counters(c));
   assert(last_group == 44 && last_selector == 2);
   assert(!hpc_gpu_adreno_raw_destroy_context(c));
-  reset(); chip = 0x08030001;
+  reset(); chip = 0x44050001;
   assert(hpc_gpu_adreno_a7xx_create_context(2, a7, &allocator, &c) == -HPC_GPU_ERROR_INCOMPATIBLE_DEVICE && !c);
   hpc_gpu_adreno_a8xx_counter_t a8 = HPC_GPU_ADRENO_A8XX_PERF_CP_ALWAYS_COUNT;
   assert(!hpc_gpu_adreno_a8xx_create_context(1, &a8, &allocator, &c));

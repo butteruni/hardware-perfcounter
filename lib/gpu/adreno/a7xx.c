@@ -1428,9 +1428,7 @@ int hpc_gpu_adreno_a7xx_create_context(uint32_t count,
   if (error) return error;
   hpc_gpu_adreno_kgsl_device_info_t info;
   hpc_gpu_adreno_raw_get_device_info(*out_context, &info);
-  uint32_t chip = info.chip_id & 0xffffff00u;
-  if ((info.chip_id >> 24) != 7 ||
-      chip == 0x07000200u || chip == 0x07000400u) {
+  if (hpc_gpu_adreno_kgsl_generation(info.chip_id) != 7) {
     hpc_gpu_adreno_raw_destroy_context(*out_context);
     *out_context = NULL;
     return -HPC_GPU_ERROR_INCOMPATIBLE_DEVICE;

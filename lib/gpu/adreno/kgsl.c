@@ -10,6 +10,23 @@
 
 #include "linux/adreno_driver_ioctl.h"
 
+uint32_t hpc_gpu_adreno_kgsl_generation(uint32_t chip_id) {
+  static const struct { uint32_t chip, generation; } known[] = {
+#include "chip_ids.inc"
+  };
+  for (size_t i = 0; i < sizeof(known) / sizeof(known[0]); ++i)
+    if (known[i].chip == chip_id) return known[i].generation;
+  for (size_t i = 0; i < sizeof(known) / sizeof(known[0]); ++i)
+    if ((known[i].chip & 255u) == 255u &&
+        (known[i].chip & 0xffffff00u) == (chip_id & 0xffffff00u))
+      return known[i].generation;
+  /* A702/A704 are A6-derived despite their marketing number. */
+  if ((chip_id & 0xffffff00u) == 0x07000200u ||
+      (chip_id & 0xffffff00u) == 0x07000400u) return 6;
+  uint32_t core = chip_id >> 24;
+  return core >= 5 && core <= 8 ? core : 0;
+}
+
 int hpc_gpu_adreno_kgsl_open(void) {
   int fd = open("/dev/kgsl-3d0", O_RDWR | O_CLOEXEC);
   return fd < 0 ? -errno : fd;

@@ -33,6 +33,9 @@ int hpc_gpu_adreno_kgsl_open(void);
 int hpc_gpu_adreno_kgsl_close(int fd);
 int hpc_gpu_adreno_kgsl_get_device_info(
     int fd, hpc_gpu_adreno_kgsl_device_info_t *info);
+/* Returns 5/6/7/8, or zero when unknown. Modern chip IDs (e.g. 0x44050001)
+ * use the pinned Mesa device table; their high byte is not a generation. */
+uint32_t hpc_gpu_adreno_kgsl_generation(uint32_t chip_id);
 int hpc_gpu_adreno_kgsl_get(int fd, uint32_t group, uint32_t selector);
 int hpc_gpu_adreno_kgsl_put(int fd, uint32_t group, uint32_t selector);
 
