@@ -57,6 +57,8 @@ hpc_cc_library(
   SRCS
     driver_ioctl.h
     driver_ioctl.c
+  PRIVATE_DEPS
+    ::kgsl
   PRIVATE_INCLUDES
     "${HPC_SOURCE_ROOT}/third_party"
   INSTALL_COMPONENT
@@ -74,3 +76,9 @@ hpc_cc_library(
   INSTALL_COMPONENT
     AdrenoGPU
 )
+
+hpc_cc_library(NAME kgsl SRCS kgsl.c
+  PRIVATE_INCLUDES "${HPC_SOURCE_ROOT}/third_party" INSTALL_COMPONENT AdrenoGPU)
+hpc_cc_library(NAME raw SRCS raw.c PRIVATE_DEPS ::kgsl INSTALL_COMPONENT AdrenoGPU)
+hpc_cc_library(NAME a7xx SRCS a7xx.c PRIVATE_DEPS ::raw INSTALL_COMPONENT AdrenoGPU)
+hpc_cc_library(NAME a8xx SRCS a8xx.c PRIVATE_DEPS ::raw INSTALL_COMPONENT AdrenoGPU)

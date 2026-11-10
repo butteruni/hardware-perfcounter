@@ -69,6 +69,18 @@ struct adreno_counter_read {
   unsigned int __pad[2];
 };
 
+/* KGSL PERFCOUNTER_QUERY, UAPI 0x3a. See third_party/adreno/README.md. */
+struct adreno_counter_query {
+  unsigned int group_id;
+  unsigned int *countables;
+  unsigned int count;
+  unsigned int max_counters;
+  unsigned int __pad[2];
+};
+
+#define ADRENO_IOCTL_COUNTER_QUERY \
+  _IOWR(ADRENO_IOCTL_TYPE, 0x3A, struct adreno_counter_query)
+
 #define ADRENO_IOCTL_COUNTER_READ \
   _IOWR(ADRENO_IOCTL_TYPE, 0x3B, struct adreno_counter_read)
 

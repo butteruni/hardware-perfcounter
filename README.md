@@ -1,5 +1,51 @@
 # HardwarePerfCounter
 
+This fork adds Adreno A7xx/A8xx support using pinned Mesa/Freedreno event
+definitions and the Qualcomm KGSL UAPI. Google's upstream is archived.
+
+## Adreno A7xx/A8xx
+
+The public `hpc/gpu/adreno/kgsl.h` API provides device information,
+GET/PUT reservations, QUERY slot discovery and batched absolute counter reads.
+It supports the KGSL groups through BV_HLSQ (54), preserves 32-bit selectors,
+returns negative errno, and leaves read outputs unchanged on failure.
+`hpc::gpu::adreno::kgsl` is the CMake target for embedding a custom sampler.
+
+`raw.h` adds a managed context with duplicate-event sharing, reservation
+rollback, start/stop and delta sampling. `a7xx.h` and `a8xx.h` add family-checked
+creation with generated enum choices; use the raw context functions afterwards.
+The modern enums use `(group << 16) | selector`, unlike legacy A5/A6 enums.
+Their 1,395 A7xx and 2,187 A8xx choices are static family candidates, not
+device-validated support counts. A702/A704 have a different A7v layout and are
+excluded from the typed A7xx API. Custom product-filtered selections can use
+the raw KGSL API. Product masks and logical formulas belong to the caller.
+
+Reads are system-wide and non-atomic. A lower counter value is reported as
+`-HPC_GPU_ADRENO_ERROR_DISCONTINUITY` by the raw context API; the complete
+baseline is re-primed and output is left unchanged. The caller must reject that
+window. No 48-bit wrap correction, zero substitution, percentage, byte scaling,
+or per-frame attribution is inferred. GET and READ can affect GPU power state;
+read duration is not proof of negligible workload perturbation.
+
+Some kernels require the shell to enable
+`/sys/class/kgsl/kgsl-3d0/perfcounter` before sampling. The library never writes
+this node or clock settings. Stop releases this context's reservations; destroy
+also closes its fd and frees host state, even after an error.
+
+For an Adreno-only build use `-DHPC_ENABLE_GPU_MALI=OFF`. Checked-in definitions
+build without source submodules; legacy regeneration is explicitly opt-in with
+`-DHPC_REGENERATE_LEGACY_COUNTERS=ON`.
+
+```shell
+python scripts/generate_modern_adreno.py --check
+python tests/run_host_tests.py
+```
+
+Host tests cover actual C transport/session code with fake syscalls, including
+failed batches, reservations, duplicates, cleanup, resets and family mismatch.
+See [source provenance](third_party/adreno/README.md). Hardware parity with an
+existing sampler must be measured separately on the intended GPU/driver.
+
 HardwarePerfCounter is a set of libraries and utilities for sampling hardware
 performance counters, focusing on GPU right now, for benchmarking/profiling
 purposes.

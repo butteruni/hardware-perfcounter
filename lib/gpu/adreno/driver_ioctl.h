@@ -18,6 +18,7 @@
 #define HPC_GPU_ADRENO_DRIVER_IOCTL_H_
 
 #include <stdint.h>
+#include "hpc/gpu/adreno/kgsl.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,11 +53,7 @@ int hpc_gpu_adreno_ioctl_activate_counter(int gpu_device, uint32_t group_id,
 int hpc_gpu_adreno_ioctl_deactivate_counter(int gpu_device, uint32_t group_id,
                                             uint32_t countable_selector);
 
-typedef struct hpc_gpu_adreno_ioctl_counter_read_counter_t {
-  uint32_t group_id;
-  uint32_t countable_selector;
-  uint64_t value;
-} hpc_gpu_adreno_ioctl_counter_read_counter_t;
+typedef hpc_gpu_adreno_kgsl_counter_t hpc_gpu_adreno_ioctl_counter_read_counter_t;
 
 /// Samples multiple Adreno counters.
 ///

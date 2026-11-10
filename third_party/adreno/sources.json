@@ -1,0 +1,27 @@
+[
+  {
+    "file": "a7xx_perfcntrs.xml",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/adreno/a7xx_perfcntrs.xml",
+    "sha256": "c86cce2b27de6df79d4f68c18c145d42fbf449f4e48dff838bb8ad685af83ce2"
+  },
+  {
+    "file": "a8xx_perfcntrs.xml",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/adreno/a8xx_perfcntrs.xml",
+    "sha256": "a0e5e561185977d8d0ce95309a5a836345cdbf003e9a31400212d2bb192e04f0"
+  },
+  {
+    "file": "a7xx_perfcntrs.json",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/adreno/a7xx_perfcntrs.json",
+    "sha256": "007fd60a6a61734321c7175d173231d723aaf36cfb15ac5ff1fa65c959520bd5"
+  },
+  {
+    "file": "a8xx_perfcntrs.json",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/adreno/a8xx_perfcntrs.json",
+    "sha256": "476477ac54b40442f34b66ae22366cd11851dd16a627e38186f14a26ca5775ad"
+  },
+  {
+    "file": "freedreno_copyright.xml",
+    "url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc2dcf9abdc6afc093e85d48e4cfa34eed60a01e/src/freedreno/registers/freedreno_copyright.xml",
+    "sha256": "16e6fda4963d01a6d2fa6c938a26082d6f0afd0988db7f953c9e4dea38739f2f"
+  }
+]

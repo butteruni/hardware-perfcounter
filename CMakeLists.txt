@@ -33,6 +33,7 @@ option(HPC_ENABLE_GPU_ADRENO "Enable support for Qualcomm Adreno GPUs" ON)
 option(HPC_ENABLE_GPU_MALI   "Enable support for ARM Mali GPUs" ON)
 
 option(HPC_BUILD_EXAMPLES "Build usage example binaries" ON)
+option(HPC_REGENERATE_LEGACY_COUNTERS "Regenerate checked-in legacy definitions (requires source submodules)" OFF)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -124,4 +125,6 @@ export(PACKAGE ${PROJECT_NAME})
 # Utility tools
 #===------------------------------------------------------------------------===#
 
-add_subdirectory(scripts EXCLUDE_FROM_ALL)
+if(HPC_REGENERATE_LEGACY_COUNTERS)
+  add_subdirectory(scripts EXCLUDE_FROM_ALL)
+endif()
